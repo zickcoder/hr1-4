@@ -1,0 +1,16 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
