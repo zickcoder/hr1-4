@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const seedData = require('../seedData');
+const seedData = require('../seedData.js');
 
 export default function handler(req, res) {
     if (req.method !== 'POST') {
