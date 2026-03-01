@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const seedData = require('../seedData');
 
-module.exports = (req, res) => {
+export default function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
@@ -13,7 +13,6 @@ module.exports = (req, res) => {
         return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
-    // Find user in seedData (case-insensitive email)
     const normalizedEmail = email.toLowerCase();
     const user = seedData.users.find(u => u.email.toLowerCase() === normalizedEmail);
 
@@ -21,13 +20,11 @@ module.exports = (req, res) => {
         return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    // Compare password with bcrypt hash
     const isValid = bcrypt.compareSync(password, user.password_hash);
     if (!isValid) {
         return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
         {
             id: user.id || 0,
@@ -54,4 +51,4 @@ module.exports = (req, res) => {
             }
         }
     });
-};
+}
