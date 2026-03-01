@@ -72,6 +72,13 @@ const seedData = {
             password_hash: "$2b$10$o.kit3VWnJTyuGjhvs5I5uzv02.0Rjkk6k1mo.wyK4PmKSnPUaiIa",
             role: "Employee",
             employee_id: 3
+        },
+        {
+            name: "Zick Admin",
+            email: "zickadmin@gmail.com",
+            password_hash: "$2a$10$E/DvzwkD7naVoxfTxHCtaOtXSB.4ePnFDV/joUhogkvxdn7X5zZZi",
+            role: "SuperAdmin",
+            employee_id: null
         }
     ]
 };
