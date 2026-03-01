@@ -218,9 +218,52 @@ function initializeDatabase(db) {
         UNIQUE(employee_id, competency_id)
       )
     `, (err) => {
-      if (err) console.error('Error creating employee_competencies table:', err.message);
-      else console.log('Employee Competencies table ready.');
+      if (err) {
+        console.error('Error creating employee_competencies table:', err.message);
+      } else {
+        console.log('Employee Competencies table ready.');
+        // Seed data if users table is empty
+        seedDataIfEmpty(db);
+      }
     });
+  });
+}
+
+function seedDataIfEmpty(db) {
+  db.get('SELECT COUNT(*) as count FROM users', [], (err, row) => {
+    if (err) {
+      console.error('Error checking users count:', err.message);
+      return;
+    }
+
+    if (row.count === 0) {
+      console.log('Database is empty. Seeding initial data...');
+      const seedData = require('../seedData');
+
+      db.serialize(() => {
+        // Seed Employees
+        const employeeStmt = db.prepare(`
+          INSERT INTO employees (employee_id, first_name, last_name, email, contact_number, department, position, employment_status, date_hired, branch_location, is_active)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        seedData.employees.forEach(emp => {
+          employeeStmt.run([emp.employee_id, emp.first_name, emp.last_name, emp.email, emp.contact_number, emp.department, emp.position, emp.employment_status, emp.date_hired, emp.branch_location, emp.is_active]);
+        });
+        employeeStmt.finalize();
+
+        // Seed Users
+        const userStmt = db.prepare(`
+          INSERT INTO users (name, email, password_hash, role, employee_id, temporary_password)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `);
+        seedData.users.forEach(user => {
+          userStmt.run([user.name, user.email, user.password_hash, user.role, user.employee_id, user.temporary_password || null]);
+        });
+        userStmt.finalize();
+
+        console.log('Seeding completed successfully.');
+      });
+    }
   });
 }
 
